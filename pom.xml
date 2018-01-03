@@ -13,7 +13,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jdk.version>1.8</jdk.version>
-    <moco>0.12.0</moco>
+    <http.client>4.5.4</http.client>
   </properties>
 
   <dependencies>
@@ -22,8 +22,15 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.4</version>
+      <version>${http.client}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>fluent-hc</artifactId>
+      <version>${http.client}</version>
+    </dependency>
+
 
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
