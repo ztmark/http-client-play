@@ -1,12 +1,13 @@
 package io.github.ztmark;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -26,21 +27,15 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.github.tomakehurst.wiremock.matching.ContentPattern;
-import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 
 /**
  * Author: Mark
@@ -55,7 +50,7 @@ public class AppTest {
     @Test
     public void testGet() {
 
-        stubFor(get(urlEqualTo("/hello"))
+        stubFor(get(urlPathEqualTo("/hello"))
                 .willReturn(aResponse().withStatus(200).withBody("hello there")));
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -77,7 +72,7 @@ public class AppTest {
 
     @Test
     public void testGetManual() throws IOException {
-        stubFor(get(urlEqualTo("/get"))
+        stubFor(get(urlPathEqualTo("/get"))
                 .willReturn(ok("get")
                         .withHeader("content-length", String.valueOf("get".getBytes(StandardCharsets.UTF_8).length))
                         .withHeader("content-encoding", StandardCharsets.UTF_8.name())));
@@ -126,7 +121,10 @@ public class AppTest {
     @Test
     public void testQueryParam() throws IOException, URISyntaxException {
 
-        stubFor(post(urlEqualTo("/login?username=mark&password=121212")).willReturn(okJson("{'success':true}")));
+        stubFor(post(urlPathEqualTo("/login"))
+                .withQueryParam("username", equalTo("mark"))
+                .withQueryParam("password", equalTo("121212"))
+                .willReturn(okJson("{'success':true}")));
 
 
         final BasicCookieStore cookieStore = new BasicCookieStore();
